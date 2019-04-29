@@ -10,11 +10,16 @@ class SongsController < ApplicationController
   post '/songs' do
     song = Song.create(name:params["Name"])
     song.artist = Artist.find_or_create_by(name:params["Artist Name"])
-    params[:genres].each do |genre_name|
-      song.genres << Genre.find_or_create_by(name: genre_name)
+    if params[:genres]
+      params[:genres].each do |genre_name|
+        song.genres << Genre.find_or_create_by(name: genre_name)
+      end
+    end
+    if params[:new_genre] != ""
+      song.genres << Genre.find_or_create_by(name: params[:new_genre])
     end
     song.save
-    
+
     flash[:message] = "Successfully created song."
     redirect :"/songs/#{song.slug}"
   end
